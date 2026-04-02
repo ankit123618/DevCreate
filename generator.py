@@ -1,25 +1,40 @@
 import os
 
 def write_file(filename, content):
+    os.makedirs(os.path.dirname(filename), exist_ok=True) if "/" in filename else None
     with open(filename, "w") as f:
         f.write(content)
 
 def generate_all(project_type):
-    os.makedirs(".github/workflows", exist_ok=True)
+    port = "8080"
 
     if project_type == "node":
         port = "3000"
+        base = "node:18"
+        run_cmd = '["npm","start"]'
     elif project_type == "python":
         port = "8000"
+        base = "python:3.10-slim"
+        run_cmd = '["python","app.py"]'
+    elif project_type == "java":
+        base = "openjdk:17"
+        run_cmd = '["java","-jar","app.jar"]'
+    elif project_type in ["c","cpp"]:
+        base = "gcc:latest"
+        run_cmd = '["./app"]'
     else:
-        port = "8080"
+        base = "alpine"
+        run_cmd = '["sh"]'
 
-    dockerfile = f"""FROM python:3.10-slim
+    dockerfile = f"""FROM {base}
 WORKDIR /app
 COPY . .
-RUN pip install -r requirements.txt || true
+RUN if [ -f requirements.txt ]; then pip install -r requirements.txt; fi || true
+RUN if [ -f package.json ]; then npm install; fi || true
+RUN if ls *.c 1> /dev/null 2>&1; then gcc *.c -o app; fi || true
+RUN if ls *.cpp 1> /dev/null 2>&1; then g++ *.cpp -o app; fi || true
 EXPOSE {port}
-CMD ["python", "app.py"]
+CMD {run_cmd}
 """
 
     compose = f"""version: '3'

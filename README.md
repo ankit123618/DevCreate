@@ -14,3 +14,9 @@ Run
 python main.py
 ```
 You have to manually modify the files generated for you projects requirements to deploy, these files only are the templates.
+
+# V0.1
+The following languages support added for file generation:
+- C
+- C++
+- Java
