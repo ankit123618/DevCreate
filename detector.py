@@ -9,4 +9,10 @@ def detect_project():
         return "php"
     elif os.path.exists("go.mod"):
         return "go"
+    elif any(f.endswith(".c") for f in os.listdir(".")):
+        return "c"
+    elif any(f.endswith(".cpp") for f in os.listdir(".")):
+        return "cpp"
+    elif os.path.exists("pom.xml") or any(f.endswith(".java") for f in os.listdir(".")):
+        return "java"
     return None
