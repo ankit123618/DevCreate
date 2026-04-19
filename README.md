@@ -1,4 +1,4 @@
-# DevAutoGen
+# DevCreate
 
 ![DevCreate demo](media/demo.gif)
 
